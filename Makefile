@@ -1,9 +1,9 @@
 .DEFAULT_GOAL := compile
 
 compile:
-	@rm -rf build
-	@mkdir build
-	@gcc src/server.c -o build/server.out
+	@rm -rf bin
+	@mkdir bin
+	@gcc src/*.c -o bin/main.out
 
 run:
-	@./build/server.out
+	@./bin/main.out
