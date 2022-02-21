@@ -1,0 +1,1 @@
+extern char parseRequest(int *connection);

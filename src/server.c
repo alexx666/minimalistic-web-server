@@ -2,41 +2,16 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <sys/types.h>
-#include <sys/uio.h>
 #include <unistd.h>
-#include <string.h>
+
+#include "handler.h"
+#include "parser.h"
 
 #define BACKLOG 3
-
-// TODO: define as file in FS
-static const char *response =
-    "HTTP/1.1 200 OK\n"
-    "Server: MY_SERVER\n"
-    "Content-Type: text/html\n"
-    "Connection: Closed\n"
-    "\n"
-    "Hello madafaka!\n";
 
 static const int domain = AF_INET;
 
 static struct sockaddr_in address;
-
-// TODO: define struct for request
-void handleRequest(char *request, int *connection) {
-    send(*connection, response, strlen(response), 0);
-    printf("Response sent\n------\n%s\n------\n", response);
-    close(*connection);
-}
-
-// TODO: read connection and return parsed request as struct
-char readRequest(int *connection)
-{
-    char request[1024] = {0};
-    read(*connection, &request, sizeof(request));
-    printf("Request received\n------\n%s\n------\n", request);
-    return *request;
-}
 
 int openAndConfigureSocket() {
     int sock, opt_value = 1;
@@ -90,8 +65,10 @@ void start(int port)
             exit(EXIT_FAILURE);
         }
 
-        char request = readRequest(&connection);
+        char request = parseRequest(&connection);
 
         handleRequest((char *)&request, &connection);
+
+        close(connection);
     }
 }
